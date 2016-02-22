@@ -31,26 +31,23 @@ def getSmallestDistanceBetweenTwoTowns(list):
 
 def getSmallestDistanceBetweenTwoTownsFromATown(list, town):
 	
-	if(len(list) == 1):
-		return 0, town, town
-	else:
-		i = 0
-			
-		while(list[i] == town):
-			i += 1
-			
-		town2 = list[i]
-		smallestDistance = euclidianDistanceBetweenTwoTowns(town, town2)	
-		listLength = len(list)
+	i = 0
+		
+	while(list[i] == town):
 		i += 1
-		while(i < (listLength - 1)):
-				if(town != list[i]):
-					x = euclidianDistanceBetweenTwoTowns(town, list[i])
-					if(x < smallestDistance):
-						smallestDistance = x
-						town2 = list[i]	
-				i += 1
-		return smallestDistance, town, town2
+		
+	town2 = list[i]
+	smallestDistance = euclidianDistanceBetweenTwoTowns(town, town2)	
+	listLength = len(list)
+	i += 1
+	while(i < (listLength - 1)):
+			if(town != list[i]):
+				x = euclidianDistanceBetweenTwoTowns(town, list[i])
+				if(x < smallestDistance):
+					smallestDistance = x
+					town2 = list[i]	
+			i += 1
+	return smallestDistance, town, town2
 	
 def euclidianDistanceBetweenTwoTowns(a, b):
 	return float(sqrt(pow((int(a.x) - int(b.x)), 2) + pow((int(a.y) - int(b.y)), 2)))
