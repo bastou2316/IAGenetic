@@ -8,10 +8,13 @@ class Population:
 		self.averageDistance = self.setAverageDistance()
 
 	def setAverageDistance(self):
-		sum = 0
-		for sol in self.solutionsList:
-			sum += sol.getDistancesSum()
-		return float(sum / len(self.solutionsList))
+		if(len(self.solutionsList) > 0):
+			sum = 0
+			for sol in self.solutionsList:
+				sum += sol.getDistancesSum()
+			return float(sum / len(self.solutionsList))
+		else:
+			return 0
 	
 	def getAverageDistance(self):
 		return self.averageDistance
@@ -19,8 +22,14 @@ class Population:
 	def getSolutions(self):
 		return self.solutionsList
 	
-	def addSoluttion(self, sol):
+	def addSolution(self, sol):
 		self.solutionsList.append(sol)
+		self.averageDistance = self.setAverageDistance()
+	
+	def addSolutionsList(self, list):
+		for solution in list:
+			self.solutionsList.append(solution)
+		self.averageDistance = self.setAverageDistance()
 	
 	def sortSolutions(self):
 		self.solutionsList = sorted(self.solutionsList, key = lambda Solution : Solution.distancesSum)
@@ -47,4 +56,15 @@ class Population:
 			j -= 1
 			listOfSolutions.append(self.solutionsList[j])
 		return listOfSolutions
-		
+	
+	def putFirstTownOfEachSolutionOnList(self):
+		for solution in self.solutionsList:
+			solution.addFirstTown()
+	
+	def removeLastTownOfEachSolution(self):
+		for solution in self.solutionsList:
+			solution.removeLastTown()
+	
+	def reduce(self, n):
+		while(len(self.solutionsList) > n):
+			del self.solutionsList[-1]
