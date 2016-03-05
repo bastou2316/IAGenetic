@@ -191,16 +191,76 @@ class Town:
 #			methods for pygame use
 #########################################################
 
-def drawLines():
-    return 0
+screen_y = 500
+screen_x = 500
+cities = []
+
+city_color = [10, 10, 200]  # blue
+city_radius = 3
+font_color = [255, 255, 255]  # white
+window = pygame.display.set_mode((screen_x, screen_y))
+screen = pygame.display.get_surface()
 
 
-def drawPoints():
-    return 0
+def freeze():
+    while True:
+        event = pygame.event.wait()
+        if event.type == KEYDOWN: break
 
+		
+def windows_init():
+    screen_x = 500
+    screen_y = 500
+
+    city_color = [10, 10, 200]  # blue
+    city_radius = 3
+
+    font_color = [255, 255, 255]  # white
+
+    pygame.init()
+    window = pygame.display.set_mode((screen_x, screen_y))
+    pygame.display.set_caption('Exemple')
+    screen = pygame.display.get_surface()
+    font = pygame.font.Font(None, 30)
+
+
+def draw(positions, screen, font, city_color, city_radius, font_color):
+    screen.fill(0)
+    for pos in positions:
+        pygame.draw.circle(screen, city_color, pos, city_radius)
+    text = font.render("Nombre: %i" % len(positions), True, font_color)
+    textRect = text.get_rect()
+    screen.blit(text, textRect)
+    pygame.display.flip()
+
+
+def create_problem(cities, screen, font, city_color, city_radius, font_color):
+    draw(cities, screen, font, city_color, city_radius, font_color)
+
+    collecting = True
+
+    while collecting:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                sys.exit(0)
+            elif event.type == KEYDOWN and event.key == K_RETURN:
+                collecting = False
+            elif event.type == MOUSEBUTTONDOWN:
+                cities.append(pygame.mouse.get_pos())
+                draw(cities, screen, font, city_color, city_radius, font_color)
+
+
+def update_windows(screen, city_color, cities, font_color, font):
+    screen.fill(0)
+    pygame.draw.lines(screen, city_color, True, cities)
+    text = font.render("Un chemin, pas le meilleur!", True, font_color)
+    textRect = text.get_rect()
+    screen.blit(text, textRect)
+    pygame.display.flip()
+		
 
 #########################################################
-#			methods of genetic algorithm
+#			methods for genetic algorithm
 #########################################################
 
 # function that prepare a list of towns for crossover
@@ -426,11 +486,13 @@ def solve(file, gui, maxtime):
             noBetterSolutionNumber = 0
         else:
             noBetterSolutionNumber += 1
+		
+        if(gui==True):
 
-        font = pygame.font.Font(None, 30)
-        mystring = str(population.getSolutions()[0])
-        list = ast.literal_eval(mystring)
-        update_windows(screen, city_color, list, font_color, font)
+            font = pygame.font.Font(None, 30)
+            mystring = str(population.getSolutions()[0])
+            list = ast.literal_eval(mystring)
+            update_windows(screen, city_color, list, font_color, font)
         # print("BESTSOL")
         # print(population.getSolutions()[0])
         i += 1
@@ -444,20 +506,8 @@ def solve(file, gui, maxtime):
     if (gui == True):
         print("Press a key to continue...")
         freeze()
-        pass
 
     return bestSolution.getDistancesSum(), bestSolution.townsList
-
-
-screen_y = 500
-screen_x = 500
-cities = []
-
-city_color = [10, 10, 200]  # blue
-city_radius = 3
-font_color = [255, 255, 255]  # white
-window = pygame.display.set_mode((screen_x, screen_y))
-screen = pygame.display.get_surface()
 
 
 # main function of genetic algorithm
@@ -467,30 +517,17 @@ def ga_solve(file=None, gui=True, maxtime=0):
         exit()
 
     elif (file is None and gui == True):
-        # initScreen()
-        # getTownsFromMouse()
         pygame.init()
         font = pygame.font.Font(None, 30)
         pygame.display.set_caption('Exemple')
         create_problem(cities, screen, font, city_color, city_radius, font_color)
-        # update_windows(screen,city_color,cities,font_color,font)
-        pass
     else:
         townsList = parseTownsFromFile(file)
         if (gui == True):
-            # initScreen()
-            # drawPoints()
             windows_init()
-            pass
     return solve(file, gui, maxtime)
 
-
-def freeze():
-    while True:
-        event = pygame.event.wait()
-        if event.type == KEYDOWN: break
-
-
+	
 # command line parameters management
 def parseParams():
     gui = True
@@ -508,59 +545,6 @@ def parseParams():
         maxtime = args.maxtime
 
     return gui, maxtime, args.filename
-
-
-def windows_init():
-    screen_x = 500
-    screen_y = 500
-
-    city_color = [10, 10, 200]  # blue
-    city_radius = 3
-
-    font_color = [255, 255, 255]  # white
-
-    pygame.init()
-    window = pygame.display.set_mode((screen_x, screen_y))
-    pygame.display.set_caption('Exemple')
-    screen = pygame.display.get_surface()
-    font = pygame.font.Font(None, 30)
-
-
-def draw(positions, screen, font, city_color, city_radius, font_color):
-    screen.fill(0)
-    for pos in positions:
-        pygame.draw.circle(screen, city_color, pos, city_radius)
-    text = font.render("Nombre: %i" % len(positions), True, font_color)
-    textRect = text.get_rect()
-    screen.blit(text, textRect)
-    pygame.display.flip()
-
-
-def create_problem(cities, screen, font, city_color, city_radius, font_color):
-    draw(cities, screen, font, city_color, city_radius, font_color)
-
-    collecting = True
-
-    while collecting:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                sys.exit(0)
-            elif event.type == KEYDOWN and event.key == K_RETURN:
-                collecting = False
-            elif event.type == MOUSEBUTTONDOWN:
-                cities.append(pygame.mouse.get_pos())
-                #  print(cities)
-                draw(cities, screen, font, city_color, city_radius, font_color)
-
-
-def update_windows(screen, city_color, cities, font_color, font):
-    screen.fill(0)
-    pygame.draw.lines(screen, city_color, True, cities)
-    print(cities)
-    text = font.render("Un chemin, pas le meilleur!", True, font_color)
-    textRect = text.get_rect()
-    screen.blit(text, textRect)
-    pygame.display.flip()
 
 
 if __name__ == "__main__":
